@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta 
+      name="description" 
+      content="это сайт фотохостинг, где пользователи могут хранить, делиться, оценивать, просматривать изображения и создавать интересные посты из загруженных гифок и фотоальбомов."/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Япикс — Фото-хостинг</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      transition: background-color 0.4s ease, color 0.4s ease;
+      background-color: #f9fafb;
+      color: #111827;
+    }
+    body.dark {
+      background-color: #0f172a;
+      color: #f9fafb;
+    }
+    select, button { transition: all 0.2s ease; }
+    .hidden { display: none; }
+    .drop-active { border-color: #6366f1; background-color: rgba(99,102,241,0.1); }
+  </style>
+</head>
+<body>
+  <div class="max-w-6xl mx-auto p-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <h1 class="font-bold text-xl">ЯПИКС</h1>
+      <nav class="hidden md:flex gap-4 text-sm opacity-80">
+        <span>Фотохостинг</span>
+        <span>Альбомы</span>
+        <span>Гифки</span>
+        <span>Комментарии</span>
+      </nav>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <select id="lang" class="border rounded px-2 py-1 text-sm bg-transparent">
+        <option value="ru">Русский</option>
+        <option value="kz">Қазақша</option>
+        <option value="en">English</option>
+      </select>
+      <button id="themeToggle" class="border rounded px-3 py-1 text-sm">🌙</button>
+      <button class="px-3 py-1 rounded bg-purple-600 text-white text-sm">Загрузить</button>
+    </div>
+  </div>
+
+  <main class="max-w-3xl mx-auto mt-8 p-4">
+    <section id="dropZone" class="border-2 border-dashed p-10 text-center rounded-xl text-dark bg-gray dark:bg-gray transition-colors">
+      <p id="title" class="text-lg font-semibold mb-2">
+        Перетащи сюда картинки, нажми Ctrl+V или <button id="chooseBtn" class="underline">Выбрать</button>
+      </p>
+      <p id="formats" class="text-sm opacity-70 mb-6">APNG, BMP, GIF, JPG, JPEG и PNG</p>
+      <input id="fileInput" type="file" accept="image/*" multiple class="hidden" />
+
+      <div class="bg-yellow-50 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200 px-4 py-2 rounded inline-block">
+        <strong id="hint">Выгодно! Избавься от рекламы и увеличь лимиты</strong>
+      </div>
+
+      <div class="mt-8 text-left border rounded p-4 bg-gray dark:bg-gray transition-colors">
+        <h2 class="font-semibold mb-2" id="withoutReg">Без регистрации:</h2>
+        <ul class="text-sm space-y-1" id="rules">
+          <li>• Загружай до 20 изображений в час</li>
+          <li>• До 10 изображений в одном альбоме</li>
+          <li>• Максимальный размер изображения — 3 МБ, ширина или высота — 10000 px</li>
+          <li>• Время редактирования альбома — 1 час</li>
+          <li>• Срок хранения — 7 дней</li>
+        </ul>
+        <div class="mt-4 text-right">
+          <button id="compare" class="border rounded-full px-4 py-2 text-sm bg-black text-white dark:bg-white dark:text-black">Сравнить аккаунты</button>
+        </div>
+      </div>
+
+      <div id="fileList" class="mt-8 text-sm opacity-70">Пока нет выбранных файлов</div>
+    </section>
+  </main>
+
+  <footer class="text-center text-xs mt-10 mb-6 opacity-70">
+    Загружая изображения, ты соглашаешься с Правилами сайта и Политикой конфиденциальности.<br />
+    IP: 212.154.242.66
+  </footer>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const chooseBtn = document.getElementById('chooseBtn');
+    const dropZone = document.getElementById('dropZone');
+    const fileList = document.getElementById('fileList');
+    const themeToggle = document.getElementById('themeToggle');
+    const langSel = document.getElementById('lang');
+
+    chooseBtn.onclick = () => fileInput.click();
+    fileInput.onchange = (e) => showFiles(e.target.files);
+
+    dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('drop-active'); };
+    dropZone.ondragleave = () => dropZone.classList.remove('drop-active');
+    dropZone.ondrop = (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drop-active');
+      showFiles(e.dataTransfer.files);
+    };
+
+    function showFiles(files) {
+      if (!files.length) return;
+      let html = `<div class='font-semibold mb-2'>Выбранные файлы (${files.length})</div>`;
+      html += '<ul class="text-sm space-y-1">';
+      for (const f of files) {
+        html += `<li>${f.name} — ${Math.round(f.size / 1024)} KB</li>`;
+      }
+      html += '</ul>';
+      fileList.innerHTML = html;
+    }
+
+    themeToggle.onclick = () => {
+      document.body.classList.toggle('dark');
+      themeToggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    };
+  </script>
+</body>
+</html>
